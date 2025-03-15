@@ -1,11 +1,11 @@
 #include <iostream>
+#include <locale.h>
 using namespace std;
 
-const int mod = 1000000;
 int counter = 0;
 
-// using recursive
-long long fibonacci(int n)
+// recursive
+unsigned long long fibonacci(int n)
 {
     counter++;
     if (n <= 1) {
@@ -16,12 +16,17 @@ long long fibonacci(int n)
 
 int main()
 {
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+
+    printf("using recursive approach\n");
+    printf("n : ");
+
     int n;
-    printf("using recursive\n");
     cin >> n;
-    // printf("%06lld\n", fibonacci(n) % mod); // for etutor answer
-    printf("last 6 digits : %lld\n", fibonacci(n) % mod);
-    printf("run times : %d\n", counter);
+
+    printf("f(n) : %'llu\n", fibonacci(n));
+    printf("run times : %'d\n", counter);
 
     return 0;
 }

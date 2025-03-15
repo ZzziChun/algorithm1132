@@ -1,9 +1,10 @@
 #include <iostream>
+#include <locale.h>
 using namespace std;
 
-typedef long long Matrix[2][2];
+typedef unsigned long long Matrix[2][2];
 Matrix base = { { 0, 1 }, { 1, 1 } };
-const int mod = 1000000;
+
 int counter = 0;
 
 void matrix_multiplication(Matrix a, Matrix b)
@@ -13,7 +14,7 @@ void matrix_multiplication(Matrix a, Matrix b)
     for (int i = 0; i < 2; i++) {
         for (int j = 0; j < 2; j++) {
             for (int k = 0; k < 2; k++) {
-                result[i][j] += (a[i][k] * b[k][j]) % mod;
+                result[i][j] += (a[i][k] * b[k][j]);
             }
         }
     }
@@ -39,13 +40,11 @@ void power(Matrix A, int fib)
         matrix_multiplication(A, base);
 }
 
-// using matrix exponentiation
-long long fibonacci3(int n)
+// matrix exponentiation
+unsigned long long fibonacci3(int n)
 {
-    if (n == 0) {
-        counter++;
+    if (n == 0)
         return 0;
-    }
 
     Matrix A = { { 0, 1 }, { 1, 1 } };
     power(A, n - 1);
@@ -55,12 +54,17 @@ long long fibonacci3(int n)
 
 int main()
 {
-    long long n;
-    printf("using matrix exponentiation\n");
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+
+    printf("using matrix exponentiation approach\n");
+    printf("n : ");
+
+    int n;
     cin >> n;
-    // printf("%06lld\n", fibonacci3(n) % mod); // for etutor answer
-    printf("last 6 digits : %lld\n", fibonacci3(n) % mod);
-    printf("run times : %d\n", counter);
+
+    printf("f(n) : %'llu\n", fibonacci3(n));
+    printf("run times : %'d\n", counter);
 
     return 0;
 }
