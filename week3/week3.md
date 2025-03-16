@@ -1,11 +1,44 @@
-以下程式的 fibonacci number 都宣告為 `unsigned long long` 型態, 並且使用 `<local.h>` 函式庫中的 `setlocale` 函數, 讓輸出數字加上逗號分隔以方便閱讀.
+# Fibonacci Number
 
-## <font color="#449df9"> **方法一 (Recursive Approach) :** </font>
+以下三段程式的 fibonacci number 都宣告為 `unsigned long long` 型態, 並且使用 `<local.h>` 函式庫中的 `setlocale` 函數, 讓輸出數字加上逗號分隔以方便閱讀.
+
+## <font color="#449df9"> **方法一 : Recursive Approach** </font>
 
 **code :**
 
 ```cpp
+#include <iostream>
+#include <locale.h>
+using namespace std;
 
+int counter = 0;
+
+// recursive
+unsigned long long fibonacci(int n)
+{
+    counter++;
+    if (n <= 1) {
+        return n;
+    } else
+        return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+int main()
+{
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+
+    printf("using recursive approach\n");
+    printf("n = ");
+
+    int n;
+    cin >> n;
+
+    printf("F(%d) = %'llu\n", n, fibonacci(n));
+    printf("run times = %'d\n", counter);
+
+    return 0;
+}
 ```
 
 **Output :**
@@ -26,12 +59,51 @@
 1.  效率低, 因為有大量重複的計算.
 2.  不適合處理大範圍的數字.
 
-## <font color="#449df9"> **方法二 (Iterative Approach) :** </font>
+## <font color="#449df9"> **方法二 : Iterative Approach** </font>
 
 **code :**
 
 ```cpp
+#include <iostream>
+#include <locale.h>
+using namespace std;
 
+int counter = 0;
+
+// iterative
+unsigned long long fibonacci2(int n)
+{
+    if (n <= 1) {
+        counter++;
+        return n;
+    }
+
+    unsigned long long previous = 0, current = 1;
+    for (int i = 2; i <= n; i++) {
+        counter++;
+        unsigned long long next = (previous + current);
+        previous = current;
+        current = next;
+    }
+    return current;
+}
+
+int main()
+{
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+
+    printf("using iterative approach\n");
+    printf("n = ");
+
+    int n;
+    cin >> n;
+
+    printf("F(%d) = %'llu\n", n, fibonacci2(n));
+    printf("run times = %'d\n", counter);
+
+    return 0;
+}
 ```
 
 **Output :**
@@ -51,12 +123,83 @@
 
 1. 寫法稍微複雜一些, 不如遞迴直觀.
 
-## <font color="#449df9"> **方法三(Matrix Exponentiation) :** </font>
+## <font color="#449df9"> **方法三 : Matrix Exponentiation** </font>
 
 **code :**
 
 ```cpp
+#include <iostream>
+#include <locale.h>
+using namespace std;
 
+typedef unsigned long long Matrix[2][2];
+Matrix base = { { 0, 1 }, { 1, 1 } };
+
+int counter = 0;
+
+void matrix_multiplication(Matrix a, Matrix b)
+{
+    counter++;
+    Matrix result = { 0 };
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            for (int k = 0; k < 2; k++) {
+                result[i][j] += (a[i][k] * b[k][j]);
+            }
+        }
+    }
+
+    // copy to a
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            a[i][j] = result[i][j];
+        }
+    }
+}
+
+void power(Matrix A, int fib)
+{
+    if (fib == 0 || fib == 1)
+        return;
+
+    power(A, fib / 2);
+    matrix_multiplication(A, A);
+
+    // odd case
+    if (fib % 2 == 1)
+        matrix_multiplication(A, base);
+}
+
+// matrix exponentiation
+unsigned long long fibonacci3(int n)
+{
+    if (n <= 1) {
+        counter++;
+        return n;
+    }
+
+    Matrix A = { { 0, 1 }, { 1, 1 } };
+    power(A, n);
+
+    return A[0][1];
+}
+
+int main()
+{
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+
+    printf("using matrix exponentiation approach\n");
+    printf("n = ");
+
+    int n;
+    cin >> n;
+
+    printf("F(%d) = %'llu\n", n, fibonacci3(n));
+    printf("run times (do matrix_multiplication) = %'d\n", counter);
+
+    return 0;
+}
 ```
 
 **Output :**
@@ -76,60 +219,170 @@
 
 1. 實現上較為複雜, 需要理解矩陣運算與快速幂算法.
 2. 當 n 很小時, 過度使用矩陣運算可能反而不夠高效.
-   根據 **黃金比例公式** 近似：
 
-\[
+## <font color="#449df9"> **Extra** </font>
+
+### unsigned long long 的限制
+
+由於 `unsigned long long` 的範圍僅為 18,446,744,073,709,551,615
+
+爲了求得 maximal of n 我們可以使用近似公式估算費氏數列的值可以用黃金比例公式來近似：
+
+$$
 F(n) \approx \frac{\varphi^n}{\sqrt{5}}
-\]
+$$
 
 其中：
 
-\[
+$$
 \varphi = \frac{1 + \sqrt{5}}{2} \approx 1.618
-\]
+$$
 
 令：
 
-\[
+$$
 \frac{\varphi^n}{\sqrt{5}} \leq 2^{64} - 1
-\]
+$$
 
 取對數：
 
-\[
-n \log_2(\varphi) \leq \log_2((2^{64} - 1) \times \sqrt{5})
-\]
+$$
+n \log_2(\varphi) \leq \log_2\left( (2^{64} - 1) \times \sqrt{5} \right)
+$$
 
 已知：
 
-- \( \log_2(\varphi) \approx 0.694 \)
-- \( \log_2(\sqrt{5}) \approx 1.161 / 2 = 0.581 \)
-- \( \log_2(2^{64} - 1) \approx 64 \)
+$$
+\log_2(\varphi) \approx 0.694
+$$
 
-\[
+$$
+\log_2(5) \approx 1.161 / 2 = 0.581
+$$
+
+$$
+\log_2(2^{64} - 1) \approx 64
+$$
+
+所以：
+
+$$
 n \times 0.694 \leq 64 + 0.581
-\]
+$$
 
-\[
+解得：
+
+$$
 n \leq \frac{64.581}{0.694} \approx 93.1
-\]
+$$
 
-所以，最大整數 `n` 為 **93**。
+因此，最大整數 $n$ 為 93。
+
+**實際測試 :**
+![](assets/a4.png)
+
+在 n ≥ 94 時, 因為輸出超過了 `unsigned long long` 的範圍, 程式確實開始顯示錯誤.
 
 ---
 
-## 確認 `F(93)` 和 `F(94)`
+### GMP (GNU Multiple Precision Library) 函式庫
 
-實際計算：
+GMP（GNU Multiple Precision Arithmetic Library）是一個用於大數運算的開源函式庫, 支援任意精度的整數、有理數與浮點數計算.
 
-\[
-F(93) = 12,200,160,415,121,876,738
-\]
-（小於 `2^{64} - 1`，可存入 `unsigned long long`）
+**根據 GMP 官方網站的描述**
 
-\[
-F(94) = 19,740,274,219,868,223,167
-\]
-（大於 `2^{64} - 1`，超過 `unsigned long long` 範圍）
+> _"There is no practical limit to the precision except the ones implied by the available memory in the machine GMP runs on."
+> (實際上，GMP 的精度沒有固定上限，唯一的限制是系統可用的記憶體。)_
 
-因此，**`F(93)` 是 `unsigned long long` 能夠存的最大費氏數，`n = 93`**。
+從這點可以知道, 使用 GMP 宣告的變數並不像 `int` 或 `double` 這樣有固定大小, 而是可以根據需求動態調整精度, 只要記憶體足夠, 就能處理極大的數值.
+
+**code :**
+
+```cpp
+#include <gmpxx.h>
+#include <iostream>
+#include <locale.h>
+using namespace std;
+
+typedef mpz_class Matrix[2][2];
+Matrix base = { { 0, 1 }, { 1, 1 } };
+
+int counter = 0;
+
+void matrix_multiplication(Matrix A, Matrix B)
+{
+    counter++;
+
+    mpz_class x = A[0][0] * B[0][0] + A[0][1] * B[1][0];
+    mpz_class y = A[0][0] * B[0][1] + A[0][1] * B[1][1];
+    mpz_class z = A[1][0] * B[0][0] + A[1][1] * B[1][0];
+    mpz_class w = A[1][0] * B[0][1] + A[1][1] * B[1][1];
+
+    A[0][0] = x;
+    A[0][1] = y;
+    A[1][0] = z;
+    A[1][1] = w;
+}
+
+void power(Matrix A, long long fib)
+{
+    if (fib == 0 || fib == 1)
+        return;
+
+    power(A, fib / 2);
+    matrix_multiplication(A, A);
+
+    // odd case
+    if (fib % 2 == 1)
+        matrix_multiplication(A, base);
+}
+
+mpz_class fibonacciGMP(long long n)
+{
+    if (n == 0) {
+        counter++;
+        return 0;
+    }
+    if (n == 1) {
+        counter++;
+        return 1;
+    }
+
+    Matrix A = { { 0, 1 }, { 1, 1 } };
+    power(A, n);
+
+    return A[0][1];
+}
+
+int main()
+{
+    // 設定 locale 為當地區設置, default is America.
+    setlocale(LC_NUMERIC, "");
+    cout.imbue(locale(""));
+
+    long long n;
+    cout << "n = ";
+    cin >> n;
+
+    mpz_class result = fibonacciGMP(n);
+    cout << "F(" << n << ") = " << result << endl;
+    printf("run times (do matrix_multiplication) = %d\n", counter);
+
+    // Calculate and display the number of digits in the result
+    size_t digits = result.get_str().size();
+    printf("Number of digits in F(%'lld) = %'zu\n", n, digits);
+
+    return 0;
+}
+```
+
+在這段程式碼中, 我對 `matrix_multiplication` 進行了優化, 使用變數直接計算矩陣乘法結果, 而不是使用迴圈來進行矩陣運算, 提高運算效率.
+此外, 在計算完 Fibonacci 數值後, 我使用 `get_str()` 將結果轉換為字串, 並透過字串的長度來計算 fibonacci 數的位數.
+
+**Output :**
+![](assets/a5.png)
+
+**F(100,000,000) :**
+![](assets/a6.png)
+![](assets/a7.png)
+![abc](asssts/b1.gif)

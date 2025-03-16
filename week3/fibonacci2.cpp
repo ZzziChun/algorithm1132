@@ -28,13 +28,13 @@ int main()
     setlocale(LC_NUMERIC, "");
 
     printf("using iterative approach\n");
-    printf("n : ");
+    printf("n = ");
 
     int n;
     cin >> n;
 
-    printf("f(n) : %'llu\n", fibonacci2(n));
-    printf("run times : %'d\n", counter);
+    printf("F(%d) = %'llu\n", n, fibonacci2(n));
+    printf("run times = %'d\n", counter);
 
     return 0;
 }

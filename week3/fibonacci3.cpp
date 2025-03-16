@@ -43,13 +43,15 @@ void power(Matrix A, int fib)
 // matrix exponentiation
 unsigned long long fibonacci3(int n)
 {
-    if (n == 0)
-        return 0;
+    if (n <= 1) {
+        counter++;
+        return n;
+    }
 
     Matrix A = { { 0, 1 }, { 1, 1 } };
-    power(A, n - 1);
+    power(A, n);
 
-    return A[1][1];
+    return A[0][1];
 }
 
 int main()
@@ -58,13 +60,13 @@ int main()
     setlocale(LC_NUMERIC, "");
 
     printf("using matrix exponentiation approach\n");
-    printf("n : ");
+    printf("n = ");
 
     int n;
     cin >> n;
 
-    printf("f(n) : %'llu\n", fibonacci3(n));
-    printf("run times : %'d\n", counter);
+    printf("F(%d) = %'llu\n", n, fibonacci3(n));
+    printf("run times (do matrix_multiplication) = %'d\n", counter);
 
     return 0;
 }
