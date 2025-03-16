@@ -385,4 +385,4 @@ int main()
 **F(100,000,000) :**
 ![](assets/a6.png)
 ![](assets/a7.png)
-![abc](asssts/b1.gif)
+![](assets/b1.gif)
