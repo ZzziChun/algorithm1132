@@ -283,16 +283,15 @@ $$
 
 在 n ≥ 94 時, 因為輸出超過了 `unsigned long long` 的範圍, 程式確實開始顯示錯誤.
 
----
-
 ### GMP (GNU Multiple Precision Library) 函式庫
 
 GMP（GNU Multiple Precision Arithmetic Library）是一個用於大數運算的開源函式庫, 支援任意精度的整數、有理數與浮點數計算.
 
-**根據 GMP 官方網站的描述**
+**根據 [GMP 官方網站](https://gmplib.org/) 的描述**
 
-> _"There is no practical limit to the precision except the ones implied by the available memory in the machine GMP runs on."
-> (實際上，GMP 的精度沒有固定上限，唯一的限制是系統可用的記憶體。)_
+> _"There is no practical limit to the precision except the ones implied by the available memory in the machine GMP runs on."_
+>
+> _(實際上，GMP 的精度沒有固定上限，唯一的限制是系統可用的記憶體。)_
 
 從這點可以知道, 使用 GMP 宣告的變數並不像 `int` 或 `double` 這樣有固定大小, 而是可以根據需求動態調整精度, 只要記憶體足夠, 就能處理極大的數值.
 
